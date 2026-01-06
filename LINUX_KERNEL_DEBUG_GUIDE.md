@@ -8,10 +8,11 @@
 
 ```bash
 sudo apt update
-sudo apt install git build-essential libncurses-dev bison flex libssl-dev libelf-dev qemu-system-x86 busybox-static
+sudo apt install git build-essential libncurses-dev bison flex libssl-dev libelf-dev qemu-system-x86 busybox-static ccache
 ```
 
 *   `build-essential`: 包含 gcc, make 等基础编译工具。
+*   `ccache`: 编译器缓存工具，可显著加快二次编译速度。
 *   `libncurses-dev`: 用于 `make menuconfig` 的文本图形界面。
 *   `bison`, `flex`: 语法分析工具，编译内核必须。
 *   `libssl-dev`, `libelf-dev`: 内核编译依赖。
@@ -42,8 +43,15 @@ sudo apt install git build-essential libncurses-dev bison flex libssl-dev libelf
 
 ### 2.2 编译
 
-使用多核编译以加快速度（`$(nproc)` 自动获取 CPU 核心数）：
+**使用 ccache 加速编译（推荐）**
 
+`ccache` 可以缓存编译结果，使得后续的重新编译（例如修改了少量代码或配置后）速度大幅提升。
+
+```bash
+make CC="ccache gcc" -j$(nproc) bzImage
+```
+
+如果不使用 ccache，则直接运行：
 ```bash
 make -j$(nproc) bzImage
 ```
